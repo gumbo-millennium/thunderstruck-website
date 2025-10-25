@@ -15,6 +15,8 @@
           nativeBuildInputs = with pkgs; [
             air
             go
+            goose
+            sqlc
           ];
 
           name = "thunderstruck-api";

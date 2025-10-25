@@ -1,0 +1,27 @@
+name: Run API unit tests
+
+on:
+  push:
+    branches:
+      - main
+      - test
+  pull_request:
+    branches:
+      - main
+      - test
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Generate SQLC models
+        run: |
+          docker run --rm --user 1000 -v ./api:/src -w /src sqlc/sqlc generate
+      -
+        name: Go test
+        run: |
+          docker run --rm -v ./api:/app golang:1.24.6-alpine3.22 sh -c 'cd /app && go test -v ./...'
