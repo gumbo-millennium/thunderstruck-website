@@ -1,5 +1,5 @@
 {
-  description = "Default flake template";
+  description = "Thunderstruck - Web";
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.05";
@@ -16,7 +16,7 @@
             nodejs
           ];
 
-          name = "default-flake";
+          name = "thunderstruck-web";
         };
       }
     );

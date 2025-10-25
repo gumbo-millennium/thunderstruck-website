@@ -1,5 +1,5 @@
 {
-  description = "Basic go + air flake template";
+  description = "Thunderstruck - API";
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-24.11";
@@ -17,7 +17,7 @@
             go
           ];
 
-          name = "air-flake";
+          name = "thunderstruck-api";
         };
       }
     );
