@@ -1,0 +1,39 @@
+services:
+  web:
+    build:
+      context: ./web/
+      dockerfile: Dockerfile
+      target: ${WEB_ENVIRONMENT:-debug}
+    networks:
+      - thunderstruck
+    ports:
+      - ${WEB_PORT:-80}:3000
+    volumes:
+      - ./web:/debug
+    env_file: .env
+
+  api:
+    build:
+      context: ./api/
+      dockerfile: Dockerfile
+      target: ${API_ENVIRONMENT:-debug}
+    networks:
+      - thunderstruck
+    ports:
+      - ${API_PORT:-81}:81
+    volumes:
+      - ./api:/debug
+    env_file: .env
+
+  postgres:
+    image: postgres:18
+    networks:
+      - thunderstruck
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
+    volumes:
+      - ${POSTGRES_PERSISTENT_DATA:-./.data}:/var/lib/postgresql/data
+    env_file: .env
+
+networks:
+  thunderstruck:
