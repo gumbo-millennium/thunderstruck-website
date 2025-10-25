@@ -3,11 +3,11 @@ name: Run API unit tests
 on:
   push:
     branches:
-      - main
+      - master
       - test
   pull_request:
     branches:
-      - main
+      - master
       - test
 
 jobs:
