@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-green-primary: #268922;
+  --color-purple: #9100C2;
+  --color-green-secondary: #82D57E;
+
+  --font-inter: "Inter", "sans-serif";
+  --font-kodchasan: "Kodchasan", "sans-serif";
+  --font-archivo: "Archivo Black", "sans-serif";
+
+  --animate-horizontal-scrolling: horizontal-scrolling 5s infinite linear;
+  --animate-horizontal-scrolling-2: horizontal-scrolling-2 5s infinite linear;
+  --animate-horizontal-scrolling-3: horizontal-scrolling-3 5s infinite linear;
+
+  @keyframes horizontal-scrolling {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes horizontal-scrolling-2 {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0%);
+    }
+  }
+
+  @keyframes horizontal-scrolling-3 {
+    from {
+      transform: translateX(200%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+}
