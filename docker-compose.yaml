@@ -32,9 +32,9 @@ services:
     networks:
       - thunderstruck
     ports:
-      - ${POSTGRES_PORT:-5432}:5432
+      - 127.0.0.1:${POSTGRES_PORT:-5432}:5432
     volumes:
-      - ${POSTGRES_PERSISTENT_DATA:-./.data}:/var/lib/postgresql/data
+      - ${POSTGRES_PERSISTENT_DATA:-./.data}:/var/lib/postgresql
     restart: unless-stopped
     env_file: .env
 
