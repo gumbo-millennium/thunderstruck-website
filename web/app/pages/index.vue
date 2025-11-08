@@ -18,6 +18,7 @@
 
               <CallToActionComponent
                 class="hover:animate-pulse"
+                :url="TICKET_SALE_LINK"
                 @click="() => console.log('hi')"
               >
                 Grijp tickets
@@ -101,6 +102,7 @@
       >
         <CallToActionComponent
           class="hover:animate-pulse"
+          :url="TICKET_SALE_LINK"
           @click="() => console.log('hi')"
         >
           Grijp tickets
@@ -147,6 +149,7 @@
 
     <FloatingCallToActionComponent
       v-if="!isMobile"
+      :url="TICKET_SALE_LINK"
     >
       Grijp tickets
     </FloatingCallToActionComponent>
@@ -174,4 +177,6 @@ const partnerService: PartnerService = new PartnerService();
 const bands: Ref<Array<Band>> = ref(bandService.GetBands());
 const partners: Ref<Array<Partner>> = ref(partnerService.GetPartners());
 const isMobile: Ref<boolean> = ref(false);
+
+const TICKET_SALE_LINK: string = 'https://www.gumbo-millennium.nl/activiteiten/thunderstruck-festival';
 </script>
