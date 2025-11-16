@@ -3,8 +3,10 @@ package tickets
 import (
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/mail"
+	"strings"
 
 	"github.com/go-chi/render"
 )
@@ -54,6 +56,30 @@ func (c TicketController) Purchase(w http.ResponseWriter, r *http.Request) {
 func (c TicketController) GetById(w http.ResponseWriter, r *http.Request) {}
 
 func (c TicketController) Index(w http.ResponseWriter, r *http.Request) {}
+
+func (c TicketController) Webhook(w http.ResponseWriter, r *http.Request) {
+	// decoder := json.NewDecoder(r.Body)
+	// test := map[string]any{}
+	// err := decoder.Decode(&test)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	//
+	// fmt.Println(test)
+
+	raw, err := io.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	id := strings.Split(string(raw), "=")[1]
+	fmt.Println(id)
+
+	_, err = c.Service.PaymentService.CheckStatus(id)
+	if err != nil {
+		panic(err)
+	}
+}
 
 type ErrResponse struct {
 	Err            error  `json:"-"`

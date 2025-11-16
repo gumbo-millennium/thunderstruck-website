@@ -26,15 +26,22 @@ type EmailService interface {
 	Send(options emails.EmailOptions) error
 }
 
-type TicketService struct {
-	Repository   TicketRepository
-	EmailService EmailService
+type PaymentService interface {
+	Process() error
+	CheckStatus(id string) (bool, error)
 }
 
-func NewTicketService(repository TicketRepository, emailService EmailService) TicketService {
+type TicketService struct {
+	Repository     TicketRepository
+	EmailService   EmailService
+	PaymentService PaymentService
+}
+
+func NewTicketService(repository TicketRepository, emailService EmailService, paymentService PaymentService) TicketService {
 	return TicketService{
-		Repository:   repository,
-		EmailService: emailService,
+		Repository:     repository,
+		EmailService:   emailService,
+		PaymentService: paymentService,
 	}
 }
 
@@ -54,6 +61,10 @@ func (s TicketService) NewTicket(mailAddress string) (data.Ticket, error) {
 		Value: s.NewTicketValue(),
 	})
 	if err != nil {
+		return data.Ticket{}, err
+	}
+
+	if err := s.PaymentService.Process(); err != nil {
 		return data.Ticket{}, err
 	}
 

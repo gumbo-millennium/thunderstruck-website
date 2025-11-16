@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/VictorAvelar/mollie-api-go/v4/mollie"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -14,6 +15,7 @@ import (
 	"github.com/gumbo-millennium/thunderstruck-website/emails"
 	"github.com/gumbo-millennium/thunderstruck-website/internal/data"
 	"github.com/gumbo-millennium/thunderstruck-website/migrations"
+	"github.com/gumbo-millennium/thunderstruck-website/payments"
 	"github.com/gumbo-millennium/thunderstruck-website/tickets"
 	"github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
@@ -43,9 +45,20 @@ func main() {
 	defer db.Close(ctx)
 	queries := data.New(db)
 
+	// Setup mollie integration
+	environment := os.Getenv("API_ENVIRONMENT")
+	config := &mollie.Config{}
+	if environment == "release" {
+		config = mollie.NewAPIConfig(false)
+	} else {
+		config = mollie.NewAPITestingConfig(false)
+	}
+	client, err := mollie.NewClient(nil, config)
+
 	// Instantiate services
 	emailService := emails.NewEmailService("noreply@thunderstruckfestival.nl")
-	ticketService := tickets.NewTicketService(queries, emailService)
+	paymentService := payments.NewPaymentService(client)
+	ticketService := tickets.NewTicketService(queries, emailService, paymentService)
 	ticketController := tickets.NewTicketController(ticketService)
 
 	// Define global router
@@ -63,6 +76,7 @@ func main() {
 	r.Post("/tickets", ticketController.Purchase)
 	r.Get("/tickets", ticketController.Index)
 	r.Get("/tickets/{id}", ticketController.GetById)
+	r.Post("/tickets/webhook", ticketController.Webhook)
 
 	// Print all defined routes
 	docgen.PrintRoutes(r)

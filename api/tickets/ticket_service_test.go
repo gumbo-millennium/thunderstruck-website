@@ -23,7 +23,15 @@ func TestMain(m *testing.M) {
 		On("Send", mock.AnythingOfType("emails.EmailOptions")).
 		Return(nil)
 
-	ticketService = NewTicketService(ticketRepository, emailService)
+	paymentService := new(mocks.PaymentServiceMock)
+	paymentService.
+		On("Process").
+		Return(nil)
+	paymentService.
+		On("CheckStatus", mock.AnythingOfType("string")).
+		Return(false, nil)
+
+	ticketService = NewTicketService(ticketRepository, emailService, paymentService)
 	m.Run()
 }
 
