@@ -1,14 +1,21 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/docgen"
+	"github.com/gumbo-millennium/thunderstruck-website/emails"
+	"github.com/gumbo-millennium/thunderstruck-website/internal/data"
 	"github.com/gumbo-millennium/thunderstruck-website/migrations"
+	"github.com/gumbo-millennium/thunderstruck-website/tickets"
+	"github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
 )
 
@@ -18,6 +25,28 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	conn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s sslmode=disable",
+		os.Getenv("POSTGRES_HOST"),
+		os.Getenv("POSTGRES_USER"),
+		os.Getenv("POSTGRES_PASSWORD"),
+		os.Getenv("POSTGRES_DB"),
+	)
+
+	// Grab SQLC queries
+	ctx := context.Background()
+	db, err := pgx.Connect(ctx, conn)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close(ctx)
+	queries := data.New(db)
+
+	// Instantiate services
+	emailService := emails.NewEmailService("noreply@thunderstruckfestival.nl")
+	ticketService := tickets.NewTicketService(queries, emailService)
+	ticketController := tickets.NewTicketController(ticketService)
 
 	// Define global router
 	r := chi.NewRouter()
@@ -31,7 +60,9 @@ func main() {
 	r.Use(middleware.Timeout(time.Second * 60))
 
 	// Add routes to router
-	r.Post("/tickets", func(w http.ResponseWriter, r *http.Request) {})
+	r.Post("/tickets", ticketController.Purchase)
+	r.Get("/tickets", ticketController.Index)
+	r.Get("/tickets/{id}", ticketController.GetById)
 
 	// Print all defined routes
 	docgen.PrintRoutes(r)

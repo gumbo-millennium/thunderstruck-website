@@ -1,11 +1,11 @@
 -- name: GetOne :one
-SELECT id, type, state, email, value, created_at, updated_at, deleted_at
+SELECT id, type, state, value, email, created_at, updated_at, deleted_at
 FROM tickets
 WHERE id = $1 AND deleted_at IS NULL
 LIMIT 1;
 
 -- name: GetAll :many
-SELECT id, type, state, email, value, created_at, updated_at, deleted_at
+SELECT id, type, state, value, email, created_at, updated_at, deleted_at
 FROM tickets
 WHERE deleted_at IS NULL;
 

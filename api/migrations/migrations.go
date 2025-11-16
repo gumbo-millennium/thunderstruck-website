@@ -25,6 +25,7 @@ func Execute() error {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 
 	goose.SetBaseFS(migrations)
 	if err := goose.SetDialect("postgres"); err != nil {

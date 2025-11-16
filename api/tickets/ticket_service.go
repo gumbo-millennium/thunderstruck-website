@@ -50,6 +50,8 @@ func (s TicketService) NewTicket(mailAddress string) (data.Ticket, error) {
 	ticket, err := s.Repository.Create(context.Background(), data.CreateParams{
 		Email: mailAddress,
 		Type:  data.TicketTypeEntry,
+		State: data.TicketStatePending,
+		Value: s.NewTicketValue(),
 	})
 	if err != nil {
 		return data.Ticket{}, err
@@ -65,4 +67,8 @@ func (s TicketService) NewTicket(mailAddress string) (data.Ticket, error) {
 	}
 
 	return ticket, nil
+}
+
+func (s TicketService) NewTicketValue() string {
+	return uuid.NewString()
 }
