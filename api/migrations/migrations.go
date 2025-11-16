@@ -31,7 +31,7 @@ func Execute() error {
 		return err
 	}
 
-	if err := goose.Up(db, "migrations"); err != nil {
+	if err := goose.Up(db, "."); err != nil {
 		return err
 	}
 
