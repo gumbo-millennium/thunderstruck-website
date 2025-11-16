@@ -1,13 +1,19 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TYPE ticket_type AS ENUM (
-  'Entry',
-  'Crew'
+CREATE TYPE TICKET_TYPE AS ENUM (
+  'entry',
+  'crew'
+);
+
+CREATE TYPE TICKET_STATE AS ENUM (
+  'pending',
+  'confirmed'
 );
 
 CREATE TABLE tickets (
   id UUID DEFAULT GEN_RANDOM_UUID(),
   type TICKET_TYPE NOT NULL,
+  state TICKET_STATE NOT NULL DEFAULT 'pending',
   value VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -22,5 +28,7 @@ CREATE TABLE tickets (
 -- +goose Down
 -- +goose StatementBegin
 DROP TABLE tickets;
-DROP TYPE ticket_type;
+
+DROP TYPE TICKET_TYPE;
+DROP TYPE TICKET_STATE;
 -- +goose StatementEnd
