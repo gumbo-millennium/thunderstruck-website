@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gumbo-millennium/thunderstruck-website/internal/data"
 	"github.com/gumbo-millennium/thunderstruck-website/payments"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type OrderRepository interface {
@@ -84,6 +85,28 @@ func (s OrderService) ValidateOrder(reference string) (data.Order, error) {
 		Checkout:  order.Checkout,
 		State:     state,
 		Email:     order.Email,
+	})
+	if err != nil {
+		return data.Order{}, err
+	}
+
+	return order, nil
+}
+
+func (s OrderService) AddTicketToOrder(ticket data.Ticket, order data.Order) (data.Order, error) {
+	ticketId := pgtype.UUID{}
+	err := ticketId.Scan(ticket.ID.String())
+	if err != nil {
+		return data.Order{}, err
+	}
+
+	order, err = s.Repository.UpdateOrder(context.Background(), data.UpdateOrderParams{
+		ID: order.ID,
+		TicketID: ticketId,
+		Reference: order.Reference,
+		Checkout: order.Checkout,
+		State: order.State,
+		Email: order.Email,
 	})
 	if err != nil {
 		return data.Order{}, err

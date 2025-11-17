@@ -100,6 +100,13 @@ func (c OrderController) ConfirmOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	order, err = c.Service.AddTicketToOrder(ticket, order)
+	if err != nil {
+		slog.Error(err.Error())
+		render.Render(w, r, ErrInternalError(err))
+		return
+	}
+
 	slog.Info("created new ticket from mollie webhook", "order_id", order.ID, "ticket_id", ticket.ID)
 	render.Render(w, r, NewOrderReponse(order))
 }
