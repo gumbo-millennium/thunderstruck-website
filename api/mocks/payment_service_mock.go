@@ -12,7 +12,7 @@ func (m *PaymentServiceMock) Process() error {
 	return args.Error(0)
 }
 
-func (m *PaymentServiceMock) CheckStatus(id string) (bool, error) {
+func (m *PaymentServiceMock) CheckPaymentStatus(id string) (bool, error) {
 	args := m.Called(id)
 
 	return args.Get(0).(bool), args.Error(0)
