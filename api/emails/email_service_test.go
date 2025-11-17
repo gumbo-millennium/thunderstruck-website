@@ -4,12 +4,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/gomail.v2"
 )
 
 var emailService EmailService
 
 func TestMain(m *testing.M) {
-	emailService = NewEmailService("test@mail.com")
+	emailService = NewEmailService("test@mail.com", &gomail.Dialer{})
 	m.Run()
 }
 

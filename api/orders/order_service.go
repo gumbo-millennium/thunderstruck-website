@@ -27,14 +27,14 @@ type OrderRepository interface {
 type OrderService struct {
 	Repository     OrderRepository
 	PaymentService payments.PaymentService
-	TicketService tickets.TicketService
+	TicketService  tickets.TicketService
 }
 
 func NewOrderService(repository OrderRepository, paymentService payments.PaymentService, ticketService tickets.TicketService) OrderService {
 	return OrderService{
 		Repository:     repository,
 		PaymentService: paymentService,
-		TicketService: ticketService,
+		TicketService:  ticketService,
 	}
 }
 
@@ -132,12 +132,12 @@ func (s OrderService) AddTicketToOrder(ticket data.Ticket, order data.Order) (da
 	}
 
 	order, err = s.Repository.UpdateOrder(context.Background(), data.UpdateOrderParams{
-		ID: order.ID,
-		TicketID: ticketId,
+		ID:        order.ID,
+		TicketID:  ticketId,
 		Reference: order.Reference,
-		Checkout: order.Checkout,
-		State: order.State,
-		Email: order.Email,
+		Checkout:  order.Checkout,
+		State:     order.State,
+		Email:     order.Email,
 	})
 	if err != nil {
 		return data.Order{}, err

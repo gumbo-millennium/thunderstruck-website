@@ -17,12 +17,12 @@ var (
 )
 
 type OrderController struct {
-	Service       OrderService
+	Service OrderService
 }
 
 func NewOrderController(service OrderService) OrderController {
 	return OrderController{
-		Service:       service,
+		Service: service,
 	}
 }
 

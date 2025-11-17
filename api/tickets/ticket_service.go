@@ -32,14 +32,14 @@ type PaymentService interface {
 }
 
 type TicketService struct {
-	Repository     TicketRepository
-	EmailService   EmailService
+	Repository   TicketRepository
+	EmailService EmailService
 }
 
 func NewTicketService(repository TicketRepository, emailService EmailService) TicketService {
 	return TicketService{
-		Repository:     repository,
-		EmailService:   emailService,
+		Repository:   repository,
+		EmailService: emailService,
 	}
 }
 

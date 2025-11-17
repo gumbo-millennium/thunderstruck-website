@@ -3,6 +3,8 @@ package emails
 import (
 	"errors"
 	"net/mail"
+
+	"gopkg.in/gomail.v2"
 )
 
 var (
@@ -14,6 +16,7 @@ var (
 
 type EmailService struct {
 	FromAddress string
+	Dialer      *gomail.Dialer
 }
 
 type EmailOptions struct {
@@ -42,9 +45,10 @@ func (o EmailOptions) Validate() error {
 	return nil
 }
 
-func NewEmailService(from string) EmailService {
+func NewEmailService(from string, dialer *gomail.Dialer) EmailService {
 	return EmailService{
 		FromAddress: from,
+		Dialer:      dialer,
 	}
 }
 
@@ -53,5 +57,11 @@ func (s EmailService) Send(options EmailOptions) error {
 		return err
 	}
 
-	return nil
+	msg := gomail.NewMessage()
+	msg.SetHeader("From", s.FromAddress)
+	msg.SetHeader("To", options.To)
+	msg.SetHeader("Subject", options.Title)
+	msg.SetBody("text/plain", options.Message)
+
+	return s.Dialer.DialAndSend(msg)
 }

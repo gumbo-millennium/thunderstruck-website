@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/VictorAvelar/mollie-api-go/v4/mollie"
@@ -20,6 +22,7 @@ import (
 	"github.com/gumbo-millennium/thunderstruck-website/tickets"
 	"github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
+	"gopkg.in/gomail.v2"
 )
 
 func main() {
@@ -56,9 +59,23 @@ func main() {
 	}
 	client, err := mollie.NewClient(nil, config)
 
+	// Setup smtp integration
+	smtpHost := os.Getenv("SMTP_HOST")
+	smtpPortStr := os.Getenv("SMTP_PORT")
+	smtpPort, err := strconv.Atoi(smtpPortStr)
+	if err != nil {
+		panic(err)
+	}
+	smtpUsername := os.Getenv("SMTP_USERNAME")
+	smtpPassword := os.Getenv("SMTP_PASSWORD")
+	dialer := gomail.NewDialer(smtpHost, smtpPort, smtpUsername, smtpPassword)
+	dialer.TLSConfig = &tls.Config{
+		InsecureSkipVerify: true,
+	}
+
 	// Instantiate services
 	paymentService := payments.NewPaymentService(client)
-	emailService := emails.NewEmailService("noreply@thunderstruckfestival.nl")
+	emailService := emails.NewEmailService("bandithardcore@gmail.com", dialer)
 	ticketService := tickets.NewTicketService(queries, emailService)
 	orderService := orders.NewOrderService(queries, paymentService, ticketService)
 	orderController := orders.NewOrderController(orderService)
