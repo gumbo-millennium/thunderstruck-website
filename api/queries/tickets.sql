@@ -1,24 +1,24 @@
--- name: GetOne :one
+-- name: GetOneTicket :one
 SELECT id, type, state, value, email, created_at, updated_at, deleted_at
 FROM tickets
 WHERE id = $1 AND deleted_at IS NULL
 LIMIT 1;
 
--- name: GetAll :many
+-- name: GetAllTickets :many
 SELECT id, type, state, value, email, created_at, updated_at, deleted_at
 FROM tickets
 WHERE deleted_at IS NULL;
 
--- name: Create :one
+-- name: CreateTicket :one
 INSERT INTO tickets (
-  type, state, email, value, updated_at, deleted_at
+  type, state, email, value
 )
 VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4
 )
 RETURNING *;
 
--- name: Update :one
+-- name: UpdateTicket :one
 UPDATE tickets SET
   type = $2,
   state = $3,
@@ -28,7 +28,7 @@ UPDATE tickets SET
 WHERE id = $1
 RETURNING *;
 
--- name: Delete :one
+-- name: DeleteTicket :one
 UPDATE tickets SET
   deleted_at = NOW()
 WHERE id = $1

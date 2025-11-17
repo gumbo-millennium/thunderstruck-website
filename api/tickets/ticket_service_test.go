@@ -15,7 +15,7 @@ var ticketService TicketService
 func TestMain(m *testing.M) {
 	ticketRepository := new(mocks.TicketRepositoryMock)
 	ticketRepository.
-		On("Create", context.Background(), mock.AnythingOfType("data.CreateParams")).
+		On("CreateTicket", context.Background(), mock.AnythingOfType("data.CreateTicketParams")).
 		Return(data.Ticket{}, nil)
 
 	emailService := new(mocks.EmailServiceMock)
@@ -23,15 +23,7 @@ func TestMain(m *testing.M) {
 		On("Send", mock.AnythingOfType("emails.EmailOptions")).
 		Return(nil)
 
-	paymentService := new(mocks.PaymentServiceMock)
-	paymentService.
-		On("Process").
-		Return(nil)
-	paymentService.
-		On("CheckStatus", mock.AnythingOfType("string")).
-		Return(false, nil)
-
-	ticketService = NewTicketService(ticketRepository, emailService, paymentService)
+	ticketService = NewTicketService(ticketRepository, emailService)
 	m.Run()
 }
 

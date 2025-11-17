@@ -15,11 +15,11 @@ var (
 )
 
 type TicketRepository interface {
-	Create(ctx context.Context, arg data.CreateParams) (data.Ticket, error)
-	Delete(ctx context.Context, id uuid.UUID) (data.Ticket, error)
-	GetAll(ctx context.Context) ([]data.Ticket, error)
-	GetOne(ctx context.Context, id uuid.UUID) (data.Ticket, error)
-	Update(ctx context.Context, arg data.UpdateParams) (data.Ticket, error)
+	CreateTicket(ctx context.Context, arg data.CreateTicketParams) (data.Ticket, error)
+	DeleteTicket(ctx context.Context, id uuid.UUID) (data.Ticket, error)
+	GetAllTickets(ctx context.Context) ([]data.Ticket, error)
+	GetOneTicket(ctx context.Context, id uuid.UUID) (data.Ticket, error)
+	UpdateTicket(ctx context.Context, arg data.UpdateTicketParams) (data.Ticket, error)
 }
 
 type EmailService interface {
@@ -34,19 +34,17 @@ type PaymentService interface {
 type TicketService struct {
 	Repository     TicketRepository
 	EmailService   EmailService
-	PaymentService PaymentService
 }
 
-func NewTicketService(repository TicketRepository, emailService EmailService, paymentService PaymentService) TicketService {
+func NewTicketService(repository TicketRepository, emailService EmailService) TicketService {
 	return TicketService{
 		Repository:     repository,
 		EmailService:   emailService,
-		PaymentService: paymentService,
 	}
 }
 
 func (s TicketService) GetAll() ([]data.Ticket, error) {
-	return s.Repository.GetAll(context.Background())
+	return s.Repository.GetAllTickets(context.Background())
 }
 
 func (s TicketService) NewTicket(mailAddress string) (data.Ticket, error) {
@@ -54,17 +52,13 @@ func (s TicketService) NewTicket(mailAddress string) (data.Ticket, error) {
 		return data.Ticket{}, ErrInvalidEmail
 	}
 
-	ticket, err := s.Repository.Create(context.Background(), data.CreateParams{
+	ticket, err := s.Repository.CreateTicket(context.Background(), data.CreateTicketParams{
 		Email: mailAddress,
 		Type:  data.TicketTypeEntry,
-		State: data.TicketStatePending,
+		State: data.TicketStateUnused,
 		Value: s.NewTicketValue(),
 	})
 	if err != nil {
-		return data.Ticket{}, err
-	}
-
-	if err := s.PaymentService.Process(); err != nil {
 		return data.Ticket{}, err
 	}
 

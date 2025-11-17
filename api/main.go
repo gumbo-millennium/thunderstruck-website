@@ -15,6 +15,7 @@ import (
 	"github.com/gumbo-millennium/thunderstruck-website/emails"
 	"github.com/gumbo-millennium/thunderstruck-website/internal/data"
 	"github.com/gumbo-millennium/thunderstruck-website/migrations"
+	"github.com/gumbo-millennium/thunderstruck-website/orders"
 	"github.com/gumbo-millennium/thunderstruck-website/payments"
 	"github.com/gumbo-millennium/thunderstruck-website/tickets"
 	"github.com/jackc/pgx/v5"
@@ -56,10 +57,11 @@ func main() {
 	client, err := mollie.NewClient(nil, config)
 
 	// Instantiate services
-	emailService := emails.NewEmailService("noreply@thunderstruckfestival.nl")
 	paymentService := payments.NewPaymentService(client)
-	ticketService := tickets.NewTicketService(queries, emailService, paymentService)
-	ticketController := tickets.NewTicketController(ticketService)
+	emailService := emails.NewEmailService("noreply@thunderstruckfestival.nl")
+	ticketService := tickets.NewTicketService(queries, emailService)
+	orderService := orders.NewOrderService(queries, paymentService)
+	orderController := orders.NewOrderController(orderService, ticketService)
 
 	// Define global router
 	r := chi.NewRouter()
@@ -73,10 +75,8 @@ func main() {
 	r.Use(middleware.Timeout(time.Second * 60))
 
 	// Add routes to router
-	r.Post("/tickets", ticketController.Purchase)
-	r.Get("/tickets", ticketController.Index)
-	r.Get("/tickets/{id}", ticketController.GetById)
-	r.Post("/tickets/webhook", ticketController.Webhook)
+	r.Post("/orders", orderController.NewOrder)
+	r.Post("/orders/confirm", orderController.ConfirmOrder)
 
 	// Print all defined routes
 	docgen.PrintRoutes(r)

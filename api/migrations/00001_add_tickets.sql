@@ -6,14 +6,14 @@ CREATE TYPE TICKET_TYPE AS ENUM (
 );
 
 CREATE TYPE TICKET_STATE AS ENUM (
-  'pending',
-  'confirmed'
+  'unused',
+  'used'
 );
 
 CREATE TABLE tickets (
   id UUID DEFAULT GEN_RANDOM_UUID(),
   type TICKET_TYPE NOT NULL,
-  state TICKET_STATE NOT NULL DEFAULT 'pending',
+  state TICKET_STATE NOT NULL DEFAULT 'unused',
   value VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
