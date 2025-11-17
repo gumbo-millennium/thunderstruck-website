@@ -60,8 +60,8 @@ func main() {
 	paymentService := payments.NewPaymentService(client)
 	emailService := emails.NewEmailService("noreply@thunderstruckfestival.nl")
 	ticketService := tickets.NewTicketService(queries, emailService)
-	orderService := orders.NewOrderService(queries, paymentService)
-	orderController := orders.NewOrderController(orderService, ticketService)
+	orderService := orders.NewOrderService(queries, paymentService, ticketService)
+	orderController := orders.NewOrderController(orderService)
 
 	// Define global router
 	r := chi.NewRouter()

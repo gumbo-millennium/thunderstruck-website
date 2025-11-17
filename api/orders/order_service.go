@@ -2,11 +2,17 @@ package orders
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
 	"github.com/gumbo-millennium/thunderstruck-website/internal/data"
 	"github.com/gumbo-millennium/thunderstruck-website/payments"
+	"github.com/gumbo-millennium/thunderstruck-website/tickets"
 	"github.com/jackc/pgx/v5/pgtype"
+)
+
+var (
+	ErrOrderAlreadyPaid error = errors.New("given order has already been paid in full")
 )
 
 type OrderRepository interface {
@@ -21,12 +27,14 @@ type OrderRepository interface {
 type OrderService struct {
 	Repository     OrderRepository
 	PaymentService payments.PaymentService
+	TicketService tickets.TicketService
 }
 
-func NewOrderService(repository OrderRepository, paymentService payments.PaymentService) OrderService {
+func NewOrderService(repository OrderRepository, paymentService payments.PaymentService, ticketService tickets.TicketService) OrderService {
 	return OrderService{
 		Repository:     repository,
 		PaymentService: paymentService,
+		TicketService: ticketService,
 	}
 }
 
@@ -66,7 +74,7 @@ func (s OrderService) ValidateOrder(reference string) (data.Order, error) {
 	}
 
 	if order.State == data.OrderStatePaid {
-		return order, nil
+		return order, ErrOrderAlreadyPaid
 	}
 
 	state, err := s.PaymentService.CheckPaymentStatus(reference)
@@ -86,6 +94,29 @@ func (s OrderService) ValidateOrder(reference string) (data.Order, error) {
 		State:     state,
 		Email:     order.Email,
 	})
+	if err != nil {
+		return data.Order{}, err
+	}
+
+	return order, nil
+}
+
+func (s OrderService) ConfirmOrderByReference(reference string) (data.Order, error) {
+	order, err := s.ValidateOrder(reference)
+	if err != nil {
+		return data.Order{}, err
+	}
+
+	if order.State != data.OrderStatePaid {
+		return data.Order{}, err
+	}
+
+	ticket, err := s.TicketService.NewTicket(order.Email)
+	if err != nil {
+		return data.Order{}, err
+	}
+
+	order, err = s.AddTicketToOrder(ticket, order)
 	if err != nil {
 		return data.Order{}, err
 	}

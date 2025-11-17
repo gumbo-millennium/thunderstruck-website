@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/gumbo-millennium/thunderstruck-website/internal/data"
-	"github.com/gumbo-millennium/thunderstruck-website/tickets"
 )
 
 var (
@@ -19,13 +18,11 @@ var (
 
 type OrderController struct {
 	Service       OrderService
-	TicketService tickets.TicketService
 }
 
-func NewOrderController(service OrderService, ticketService tickets.TicketService) OrderController {
+func NewOrderController(service OrderService) OrderController {
 	return OrderController{
 		Service:       service,
-		TicketService: ticketService,
 	}
 }
 
@@ -80,34 +77,17 @@ func (c OrderController) ConfirmOrder(w http.ResponseWriter, r *http.Request) {
 
 	// The second position in the split should equal the value of the payment id.
 	// Within our own order domain we refer to this id as `reference`.
-	order, err := c.Service.ValidateOrder(split[1])
-	if err != nil {
-		slog.Error(err.Error())
-		render.Render(w, r, ErrInternalError(err))
-		return
-	}
-
-	if order.State != data.OrderStatePaid {
-		slog.Error(err.Error())
+	order, err := c.Service.ConfirmOrderByReference(split[1])
+	if errors.Is(err, ErrOrderAlreadyPaid) {
 		render.Render(w, r, NewOrderReponse(order))
 		return
-	}
-
-	ticket, err := c.TicketService.NewTicket(order.Email)
-	if err != nil {
+	} else if err != nil {
 		slog.Error(err.Error())
 		render.Render(w, r, ErrInternalError(err))
 		return
 	}
 
-	order, err = c.Service.AddTicketToOrder(ticket, order)
-	if err != nil {
-		slog.Error(err.Error())
-		render.Render(w, r, ErrInternalError(err))
-		return
-	}
-
-	slog.Info("created new ticket from mollie webhook", "order_id", order.ID, "ticket_id", ticket.ID)
+	slog.Info("created new ticket from mollie webhook", "order_id", order.ID, "ticket_id", order.TicketID)
 	render.Render(w, r, NewOrderReponse(order))
 }
 
