@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/gumbo-millennium/thunderstruck-website/emails"
 	"github.com/gumbo-millennium/thunderstruck-website/internal/data"
-	"github.com/gumbo-millennium/thunderstruck-website/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -13,14 +13,17 @@ import (
 var ticketService TicketService
 
 func TestMain(m *testing.M) {
-	ticketRepository := new(mocks.TicketRepositoryMock)
+	ticketRepository := new(TicketRepositoryMock)
 	ticketRepository.
 		On("CreateTicket", context.Background(), mock.AnythingOfType("data.CreateTicketParams")).
 		Return(data.Ticket{}, nil)
 
-	emailService := new(mocks.EmailServiceMock)
+	emailService := new(emails.EmailServiceMock)
 	emailService.
 		On("Send", mock.AnythingOfType("emails.EmailOptions")).
+		Return(nil)
+	emailService.
+		On("SendTicketConfirmationEmail", mock.AnythingOfType("data.Ticket")).
 		Return(nil)
 
 	ticketService = NewTicketService(ticketRepository, emailService)

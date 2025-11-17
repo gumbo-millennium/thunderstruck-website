@@ -4,13 +4,18 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/gomail.v2"
+	"github.com/stretchr/testify/mock"
 )
 
 var emailService EmailService
 
 func TestMain(m *testing.M) {
-	emailService = NewEmailService("test@mail.com", &gomail.Dialer{})
+	dialMock := &EmailServiceDialerMock{}
+	dialMock.
+		On("DialAndSend", mock.AnythingOfType("[]*gomail.Message")).
+		Return(nil)
+
+	emailService = NewEmailService("test@mail.com", dialMock)
 	m.Run()
 }
 

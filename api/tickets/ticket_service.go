@@ -24,6 +24,7 @@ type TicketRepository interface {
 
 type EmailService interface {
 	Send(options emails.EmailOptions) error
+	SendTicketConfirmationEmail(ticket data.Ticket) error
 }
 
 type PaymentService interface {
@@ -62,11 +63,7 @@ func (s TicketService) NewTicket(mailAddress string) (data.Ticket, error) {
 		return data.Ticket{}, err
 	}
 
-	err = s.EmailService.Send(emails.EmailOptions{
-		To:      mailAddress,
-		Title:   "Jouw Thunderstruck ticket staat klaar!",
-		Message: "Lorem Ipsum",
-	})
+	err = s.EmailService.SendTicketConfirmationEmail(ticket)
 	if err != nil {
 		return data.Ticket{}, err
 	}
