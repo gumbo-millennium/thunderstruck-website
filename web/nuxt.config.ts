@@ -25,6 +25,13 @@ export default defineNuxtConfig({
 
   css: [ '~/assets/css/main.css' ],
 
+  runtimeConfig: {
+    public: {
+      serverBaseURL: process.env.SERVER_BASE_URL,
+      clientBaseURL: process.env.CLIENT_BASE_URL,
+    },
+  },
+
   vite: {
     plugins: [
       tailwindcss(),
