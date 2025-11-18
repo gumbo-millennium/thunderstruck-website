@@ -44,6 +44,10 @@ func NewTicketService(repository TicketRepository, emailService EmailService) Ti
 	}
 }
 
+func (s TicketService) GetTicketByID(id uuid.UUID) (data.Ticket, error) {
+	return s.Repository.GetOneTicket(context.Background(), id)
+}
+
 func (s TicketService) GetAll() ([]data.Ticket, error) {
 	return s.Repository.GetAllTickets(context.Background())
 }

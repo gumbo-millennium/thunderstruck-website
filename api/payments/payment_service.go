@@ -2,6 +2,8 @@ package payments
 
 import (
 	"context"
+	"fmt"
+	"os"
 
 	"github.com/VictorAvelar/mollie-api-go/v4/mollie"
 	"github.com/gumbo-millennium/thunderstruck-website/internal/data"
@@ -17,15 +19,15 @@ func NewPaymentService(client *mollie.Client) PaymentService {
 	}
 }
 
-func (s PaymentService) NewPayment() (string, string, error) {
+func (s PaymentService) NewPayment(order data.Order) (string, string, error) {
 	payment := mollie.CreatePayment{
 		Amount: &mollie.Amount{
 			Currency: "EUR",
 			Value:    "5.00",
 		},
 		Description: "Thunderstruck Festival 2025 ticket",
-		RedirectURL: "https://thunderstruckfestival.nl/",
-		WebhookURL:  "https://6f872a82767a.ngrok-free.app/orders/confirm",
+		RedirectURL: fmt.Sprintf("%s/orders/%s", os.Getenv("MOLLIE_REDIRECT_URL"), order.ID),
+		WebhookURL:  os.Getenv("MOLLIE_WEBHOOK_URL"),
 	}
 
 	_, createdPayment, err := s.client.Payments.Create(context.Background(), payment, nil)

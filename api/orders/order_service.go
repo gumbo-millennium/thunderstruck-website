@@ -47,7 +47,7 @@ func (s OrderService) NewOrder(mailAddress string) (data.Order, error) {
 		return data.Order{}, err
 	}
 
-	id, checkout, err := s.PaymentService.NewPayment()
+	id, checkout, err := s.PaymentService.NewPayment(order)
 	if err != nil {
 		return data.Order{}, err
 	}
@@ -144,4 +144,8 @@ func (s OrderService) AddTicketToOrder(ticket data.Ticket, order data.Order) (da
 	}
 
 	return order, nil
+}
+
+func (s OrderService) GetOrderByID(id uuid.UUID) (data.Order, error) {
+	return s.Repository.GetOneOrder(context.Background(), id)
 }

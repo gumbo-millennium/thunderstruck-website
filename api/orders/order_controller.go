@@ -8,7 +8,9 @@ import (
 	"net/mail"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 	"github.com/gumbo-millennium/thunderstruck-website/internal/data"
 )
 
@@ -88,6 +90,28 @@ func (c OrderController) ConfirmOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	slog.Info("created new ticket from mollie webhook", "order_id", order.ID, "ticket_id", order.TicketID)
+	render.Render(w, r, NewOrderReponse(order))
+}
+
+func (c OrderController) GetOrder(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if id == "" {
+		render.Render(w, r, ErrInvalidRequest(errors.New("no order id given")))
+		return
+	}
+
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	order, err := c.Service.GetOrderByID(uid)
+	if err != nil {
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
 	render.Render(w, r, NewOrderReponse(order))
 }
 

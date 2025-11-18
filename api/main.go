@@ -77,6 +77,7 @@ func main() {
 	paymentService := payments.NewPaymentService(client)
 	emailService := emails.NewEmailService("bandithardcore@gmail.com", dialer)
 	ticketService := tickets.NewTicketService(queries, emailService)
+	ticketController := tickets.NewTicketController(ticketService)
 	orderService := orders.NewOrderService(queries, paymentService, ticketService)
 	orderController := orders.NewOrderController(orderService)
 
@@ -92,8 +93,15 @@ func main() {
 	r.Use(middleware.Timeout(time.Second * 60))
 
 	// Add routes to router
-	r.Post("/orders", orderController.NewOrder)
-	r.Post("/orders/confirm", orderController.ConfirmOrder)
+	r.Route("/orders", func(r chi.Router) {
+		r.Post("/", orderController.NewOrder)
+		r.Post("/confirm", orderController.ConfirmOrder)
+		r.Get("/{id}", orderController.GetOrder)
+	})
+
+	r.Route("/tickets", func(r chi.Router) {
+		r.Get("/{id}", ticketController.GetTicket)
+	})
 
 	// Print all defined routes
 	docgen.PrintRoutes(r)
