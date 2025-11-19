@@ -37,29 +37,32 @@ const interval: Ref<number> = ref(-1);
 const { data, error } = await useApi<Order>(`orders/${route.params.id}`)
 if (error.value !== undefined) {
   console.error(error.value);
-  navigateTo('/'); // TODO: Uncomment
+  navigateTo('/');
 }
 
 order.value = data.value
 if (order.value?.state === OrderState.PAID) {
-  navigateTo(`/tickets/${order.value?.id}`);
+  navigateTo(`/tickets/${order.value?.ticket_id}`);
 }
 
 onMounted(() => {
   interval.value = setInterval(async () => {
     if (order.value?.state === OrderState.PENDING) {
+      console.log('hi!');
       await fetchOrder();
     }
 
     if (order.value?.state === OrderState.PAID) {
       clearInterval(interval.value);
-      navigateTo(`/tickets/${order.value?.id}`);
+      navigateTo(`/tickets/${order.value?.ticket_id}`, { external: true });
     }
   }, 1000);
 });
 
 async function fetchOrder() {
-  const response = await useClientFetch(`orders/${route.params.id}`);
+  const response = await useClientFetch<Order>(`orders/${route.params.id}`);
+
+  order.value = response;
   console.log(response);
 }
 </script>

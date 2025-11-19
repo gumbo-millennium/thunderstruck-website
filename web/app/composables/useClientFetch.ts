@@ -1,4 +1,4 @@
-export const useClientFetch = (path: string, options = {}) => {
+export const useClientFetch = <T>(path: string, options = {}) => {
     const config = useRuntimeConfig()
-    return $fetch(`${config.public.clientBaseURL}${path}`, options)
+    return $fetch<T>(`${config.public.clientBaseURL}${path}`, options)
 }
