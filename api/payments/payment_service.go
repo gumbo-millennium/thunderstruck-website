@@ -23,7 +23,7 @@ func (s PaymentService) NewPayment(order data.Order) (string, string, error) {
 	payment := mollie.CreatePayment{
 		Amount: &mollie.Amount{
 			Currency: "EUR",
-			Value:    "5.00",
+			Value:    "5.40",
 		},
 		Description: "Thunderstruck Festival 2025 ticket",
 		RedirectURL: fmt.Sprintf("%s/orders/%s", os.Getenv("MOLLIE_REDIRECT_URL"), order.ID),
