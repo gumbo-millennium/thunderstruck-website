@@ -19,6 +19,7 @@ import (
 	"github.com/gumbo-millennium/thunderstruck-website/migrations"
 	"github.com/gumbo-millennium/thunderstruck-website/orders"
 	"github.com/gumbo-millennium/thunderstruck-website/payments"
+	"github.com/gumbo-millennium/thunderstruck-website/scanner"
 	"github.com/gumbo-millennium/thunderstruck-website/tickets"
 	"github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
@@ -80,6 +81,7 @@ func main() {
 	ticketController := tickets.NewTicketController(ticketService)
 	orderService := orders.NewOrderService(queries, paymentService, ticketService)
 	orderController := orders.NewOrderController(orderService)
+	scannerController := scanner.NewScannerController(os.Getenv("SCANNER_TOKEN"), ticketService)
 
 	// Define global router
 	r := chi.NewRouter()
@@ -99,6 +101,11 @@ func main() {
 
 	r.Route("/tickets", func(r chi.Router) {
 		r.Get("/{id}", ticketController.GetTicket)
+	})
+
+	r.Route("/scanner", func(r chi.Router) {
+		r.Post("/", scannerController.ScanTicket)
+		r.Post("/token", scannerController.ValidateToken)
 	})
 
 	// Print all defined routes
