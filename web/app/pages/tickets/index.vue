@@ -47,6 +47,8 @@ const email: Ref<string> = ref('');
 const disabled: Ref<boolean> = ref(true);
 const error: Ref<string> = ref('');
 
+navigateTo('/');
+
 watch(email, (to) => {
   disabled.value = !to.includes('@') || !to.includes('.');
 });
