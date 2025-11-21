@@ -178,5 +178,5 @@ const bands: Ref<Array<Band>> = ref(bandService.GetBands());
 const partners: Ref<Array<Partner>> = ref(partnerService.GetPartners());
 const isMobile: Ref<boolean> = ref(false);
 
-const TICKET_SALE_LINK: string = 'https://www.gumbo-millennium.nl/activiteiten/thunderstruck-festival';
+const TICKET_SALE_LINK: string = '/tickets';
 </script>

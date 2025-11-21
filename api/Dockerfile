@@ -3,9 +3,11 @@ WORKDIR /app
 COPY ./ ./
 RUN go mod download
 RUN go build -o /bin/app ./main.go
+RUN apk --update add ca-certificates
 
 FROM scratch AS release
 COPY --from=build /bin/app /bin/app
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 CMD [ "/bin/app" ]
 
 FROM golang:1.24.6-alpine3.22 AS debug

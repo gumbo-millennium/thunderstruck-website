@@ -7,6 +7,7 @@ export enum OrderState {
 export default interface Order {
   id: string,
   ticket_id: string,
+  checkout: string,
   reference: string,
   state: OrderState,
   email: string,

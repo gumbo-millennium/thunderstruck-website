@@ -1,5 +1,6 @@
 <template>
   <a
+    v-if="props.url"
     ref="noreferrer noopener"
     target="_blank"
     :href="props.url"
@@ -10,10 +11,32 @@
     </div>
     <div class="group-hover:ml-0 group-focus:ml-0 group-hover:mt-0 group-focus:mt-0 group-hover:z-1 group-focus:z-1 absolute ml-2 mt-2 border-purple border-1 w-80 h-12 transition-all duration-100 delay-100"/>
   </a>
+  <button
+    v-else
+    class="font-archivo group flex justify-center items-center relative hover:cursor-pointer"
+  >
+    <div
+      v-if="props.disabled"
+      class="flex justify-center items-center z-1 bg-zinc-400 w-80 h-12 text-white uppercase font-[1000] text-3xl"
+    >
+      <slot />
+    </div>
+    <div
+      v-else
+      class="flex justify-center items-center z-1 bg-purple w-80 h-12 text-white uppercase font-[1000] text-3xl group-hover:bg-green-secondary group-focus:bg-white group-hover:text-purple group-focus:text-purple group-hover:z-0 group-focus:z-0 transition-all duration-100"
+    >
+      <slot />
+    </div>
+    <div
+      v-if="!props.disabled"
+      class="group-hover:ml-0 group-focus:ml-0 group-hover:mt-0 group-focus:mt-0 group-hover:z-1 group-focus:z-1 absolute ml-2 mt-2 border-purple border-1 w-80 h-12 transition-all duration-100 delay-100"
+    />
+  </button>
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{
-  url: string,
+  url?: string,
+  disabled?: boolean,
 }>();
 </script>
