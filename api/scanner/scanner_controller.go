@@ -86,7 +86,7 @@ func (c ScannerController) ScanTicket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ticket, err = c.TicketService.Repository.UpdateTicket(context.Background(), data.UpdateTicketParams{
+	_, err = c.TicketService.Repository.UpdateTicket(context.Background(), data.UpdateTicketParams{
 		ID:    ticket.ID,
 		Type:  ticket.Type,
 		State: data.TicketStateUsed,
