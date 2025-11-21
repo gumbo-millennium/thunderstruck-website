@@ -1,6 +1,5 @@
 <template>
   <div class="w-screen min-h-screen bg-green-primary relative overflow-x-hidden p-4">
-    {{ ticket?.value }} {{ scanned }} {{ paused }}
     <PurpleRibbonComponent>METAL // PUNK //</PurpleRibbonComponent>
     <div class="font-inter rounded-2xl w-full h-full bg-white">
       <GenericBannerComponent />
