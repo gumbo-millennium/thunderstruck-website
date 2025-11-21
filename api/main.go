@@ -94,7 +94,7 @@ func main() {
 
 	// Add routes to router
 	r.Route("/orders", func(r chi.Router) {
-		r.Post("/", orderController.NewOrder)
+		// r.Post("/", orderController.NewOrder)
 		r.Post("/confirm", orderController.ConfirmOrder)
 		r.Get("/{id}", orderController.GetOrder)
 	})

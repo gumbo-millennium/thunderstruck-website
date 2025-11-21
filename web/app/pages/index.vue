@@ -18,7 +18,7 @@
 
               <CallToActionComponent
                 class="hover:animate-pulse"
-                :url="TICKET_SALE_LINK"
+                :disabled="true"
               >
                 Grijp tickets
               </CallToActionComponent>
@@ -101,8 +101,7 @@
       >
         <CallToActionComponent
           class="hover:animate-pulse"
-          :url="TICKET_SALE_LINK"
-          @click="() => console.log('hi')"
+          :disabled="true"
         >
           Grijp tickets
         </CallToActionComponent>
@@ -148,7 +147,7 @@
 
     <FloatingCallToActionComponent
       v-if="!isMobile"
-      :url="TICKET_SALE_LINK"
+      :disabled="true"
     >
       Grijp tickets
     </FloatingCallToActionComponent>
