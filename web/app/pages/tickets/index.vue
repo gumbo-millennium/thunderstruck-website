@@ -22,6 +22,7 @@
           placeholder="Je email adres"
           required="true"
           class="outline-purple outline-2 bg-purple-100 rounded p-2"
+          @keyup.enter="createTicket"
         >
         <div class="bg-zinc-100">
           <p class="m-2 text-xs">Entree ticket: <span class="font-black">€5,00</span></p>
@@ -70,7 +71,7 @@ async function createTicket() {
       external: true,
     })
 
-  } catch (e: any) {
+  } catch (e: unknown) {
     error.value = 'Er is iets fout gegaan. Probeer het later opnieuw.';
     return;
   }
