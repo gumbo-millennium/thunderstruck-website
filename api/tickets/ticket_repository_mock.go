@@ -36,7 +36,7 @@ func (m *TicketRepositoryMock) GetOneTicket(ctx context.Context, id uuid.UUID) (
 	return args.Get(0).(data.Ticket), args.Error(1)
 }
 
-func (m *TicketRepositoryMock) GetOneTicketByValue(ctx context.Context, id uuid.UUID) (data.Ticket, error) {
+func (m *TicketRepositoryMock) GetOneTicketByValue(ctx context.Context, value string) (data.Ticket, error) {
 	args := m.Called(ctx, id)
 
 	return args.Get(0).(data.Ticket), args.Error(1)
