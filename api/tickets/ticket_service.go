@@ -19,6 +19,7 @@ type TicketRepository interface {
 	DeleteTicket(ctx context.Context, id uuid.UUID) (data.Ticket, error)
 	GetAllTickets(ctx context.Context) ([]data.Ticket, error)
 	GetOneTicket(ctx context.Context, id uuid.UUID) (data.Ticket, error)
+	GetOneTicketByValue(ctx context.Context, value string) (data.Ticket, error)
 	UpdateTicket(ctx context.Context, arg data.UpdateTicketParams) (data.Ticket, error)
 }
 
@@ -46,6 +47,10 @@ func NewTicketService(repository TicketRepository, emailService EmailService) Ti
 
 func (s TicketService) GetTicketByID(id uuid.UUID) (data.Ticket, error) {
 	return s.Repository.GetOneTicket(context.Background(), id)
+}
+
+func (s TicketService) GetTicketByValue(value string) (data.Ticket, error) {
+	return s.Repository.GetOneTicketByValue(context.Background(), value)
 }
 
 func (s TicketService) GetAll() ([]data.Ticket, error) {

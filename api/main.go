@@ -81,7 +81,7 @@ func main() {
 	ticketController := tickets.NewTicketController(ticketService)
 	orderService := orders.NewOrderService(queries, paymentService, ticketService)
 	orderController := orders.NewOrderController(orderService)
-	scannerController := scanner.NewScannerController(os.Getenv("SCANNER_TOKEN"))
+	scannerController := scanner.NewScannerController(os.Getenv("SCANNER_TOKEN"), ticketService)
 
 	// Define global router
 	r := chi.NewRouter()
@@ -103,7 +103,10 @@ func main() {
 		r.Get("/{id}", ticketController.GetTicket)
 	})
 
-	r.Post("/scanner/token", scannerController.ValidateToken)
+	r.Route("/scanner", func(r chi.Router) {
+		r.Post("/", scannerController.ScanTicket)
+		r.Post("/token", scannerController.ValidateToken)
+	})
 
 	// Print all defined routes
 	docgen.PrintRoutes(r)

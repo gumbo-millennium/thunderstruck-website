@@ -4,6 +4,12 @@ FROM tickets
 WHERE id = $1 AND deleted_at IS NULL
 LIMIT 1;
 
+-- name: GetOneTicketByValue :one
+SELECT id, type, state, value, email, created_at, updated_at, deleted_at
+FROM tickets
+WHERE value = $1 AND deleted_at IS NULL
+LIMIT 1;
+
 -- name: GetAllTickets :many
 SELECT id, type, state, value, email, created_at, updated_at, deleted_at
 FROM tickets
