@@ -19,7 +19,6 @@
               <CallToActionComponent
                 class="hover:animate-pulse"
                 :url="TICKET_SALE_LINK"
-                @click="() => console.log('hi')"
               >
                 Grijp tickets
               </CallToActionComponent>

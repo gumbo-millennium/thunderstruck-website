@@ -1,7 +1,7 @@
 <template>
   <div class="fixed bottom-0 right-0 m-8 bg-green-secondary p-8 animate-bounce">
     <CallToActionComponent
-      :href="props.url"
+      :url="props.url"
     >
       <slot />
     </CallToActionComponent>
